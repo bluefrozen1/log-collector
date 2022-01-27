@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info" monitorInterval="30">
+	<Properties>
+		<Property name="logDir">BigData/logs/collector</Property>
+		<Property name="logPath">BigData/logs/collector/collector.log</Property>
+		<Property name="logRollingPath">BigData/logs/collector/collector_%d{yyyyMMdd}.log</Property>
+		<Property name="logRollingInterval">1</Property>
+
+		<Property name="collectHistoryDashboardPath">BigData/logs/collector/dashboard/collectHistoryDashboard.log</Property>
+		<Property name="collectHistoryDashboardRollingPath">BigData/logs/collector/dashboard/collectHistoryDashboard_%d{yyyyMMddHHmmss}.log</Property>
+		<Property name="collectHistoryDashboardRollingInterval">10</Property>
+
+	</Properties>
+
+	<Appenders>
+		<Console name="STDOUT">
+			<PatternLayout pattern="%d [%p] %m%n" />
+		</Console>
+
+		<RollingFile name="rollingFile" fileName="${logPath}" filePattern="${logRollingPath}">
+			<PatternLayout pattern="%d [%p] %m%n"/>
+			<TimeBasedTriggeringPolicy interval="${logRollingInterval}"/>
+	      	<DefaultRolloverStrategy>
+        		<Delete basePath="${logDir}" maxDepth="1">
+        			<IfFileName glob="*.log"/>
+          			<IfLastModified age="30d"/>
+        		</Delete>
+      		</DefaultRolloverStrategy>
+		</RollingFile>
+
+		<RollingFile name="collectHistoryDashboardRollingFile" fileName="${collectHistoryDashboardPath}" filePattern="${collectHistoryDashboardRollingPath}">
+			<PatternLayout pattern="%m%n"/>
+			<TimeBasedTriggeringPolicy interval="${collectHistoryDashboardRollingInterval}"/>
+		</RollingFile>
+	</Appenders>
+
+	<Loggers>
+		<Root level="debug">
+			<AppenderRef ref="rollingFile" />
+			<AppenderRef ref="STDOUT" />
+		</Root>
+
+		<Logger name="collectHistoryDashboardLogger" level="info" additivity="false">
+ 			<AppenderRef ref="collectHistoryDashboardRollingFile" />
+		</Logger>
+
+		<Logger name="org.quartz" level="error" additivity="false"/>
+		<Logger name="org.apache.avro" level="error" additivity="false"/>
+        <Logger name="io.netty" level="error" additivity="false"/>
+	</Loggers>
+
+</Configuration>
